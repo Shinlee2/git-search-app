@@ -7,7 +7,7 @@ import java.util.List;
 public class SerializedEntity {
     @JsonProperty("Repository Name")
     private String name;
-    @JsonProperty("Repository Owner")
+    @JsonProperty("Owner Login")
     private String owner;
     @JsonProperty("Branch List")
     private List<BranchSerialized> branches;

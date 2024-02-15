@@ -1,15 +1,11 @@
 package gitSearch.controller;
 
-import gitSearch.entity.BranchEntityDeserialized;
-import gitSearch.entity.BranchSerialized;
-import gitSearch.entity.SerializedEntity;
-import gitSearch.entity.UserEntityDeserialized;
+import gitSearch.entity.*;
+import gitSearch.handler.UsernameNotFoundException;
 import gitSearch.service.RestService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +19,7 @@ public class Controller {
     public List<SerializedEntity> getRepositoriesByUsername(@PathVariable String username) {
 
         List<UserEntityDeserialized> repositoryList = restService.deserializeUsers(username);
+
         List<SerializedEntity> serializedEntityList = new ArrayList<>();
 
         for (int i = 0; i < repositoryList.size(); i++) {
@@ -43,5 +40,15 @@ public class Controller {
             }
         }
         return serializedEntityList;
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ExceptionHandingEntity handleException(@RequestBody UsernameNotFoundException usernameNotFoundException) {
+        ExceptionHandingEntity exceptionHandingEntity = new ExceptionHandingEntity();
+        exceptionHandingEntity.setStatusCode(usernameNotFoundException.getStatusCode());
+        exceptionHandingEntity.setStatusMessage(usernameNotFoundException.getMessage());
+        return exceptionHandingEntity;
     }
 }
