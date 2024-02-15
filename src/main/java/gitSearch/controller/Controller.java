@@ -1,7 +1,11 @@
 package gitSearch.controller;
 
 import gitSearch.entity.BranchEntityDeserialized;
+import gitSearch.entity.BranchSerialized;
+import gitSearch.entity.SerializedEntity;
 import gitSearch.entity.UserEntityDeserialized;
+import gitSearch.service.RestService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
@@ -9,31 +13,32 @@ import org.springframework.web.client.RestClient;
 import java.util.ArrayList;
 import java.util.List;
 
+//api key = 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
+
+
 @RestController
 public class Controller {
-    @RequestMapping(value = "/{username}", method = RequestMethod.GET, headers = {"Accept=application/json", "key=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"})
-    public List<UserEntityDeserialized> getRepositoriesByUsername(@PathVariable String username) {
-        RestClient restClient = RestClient.create();
+    @Autowired
+    private RestService restService;
 
-        List<UserEntityDeserialized> deserializedRepositoryNames = restClient
-                .get()
-                .uri("https://api.github.com/users/" + username + "/repos")
-                .retrieve()
-                .body(new ParameterizedTypeReference<>() {});
-        List<BranchEntityDeserialized> deserializedBranches = new ArrayList<>();
+    @RequestMapping(value = "/{username}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public List<SerializedEntity> getRepositoriesByUsername(@PathVariable String username) {
 
-        for (int i = 0; i < deserializedRepositoryNames.size(); i++) {
-            String repositoryName = deserializedRepositoryNames.get(i).getName();
+        List<UserEntityDeserialized> repositoryList = restService.deserializeUsers(username);
+        List<SerializedEntity> serializedEntityList = new ArrayList<>();
 
-            deserializedBranches = restClient
-                    .get()
-                    .uri("https://api.github.com/repos/" + username + "/" + repositoryName + "/branches")
-                    .retrieve()
-                    .body(new ParameterizedTypeReference<>() {});
+        for (int i = 0; i < repositoryList.size(); i++) {
+            String repository = repositoryList.get(i).getName();
+            List<BranchEntityDeserialized> deserializedBranchList = restService.deserializeBranches(username, repository);
+
+            List<BranchSerialized> branchSerializedList = new ArrayList<>();
+            for (int j = 0; j < deserializedBranchList.size(); j++) {
+                BranchSerialized branchSerialized = new BranchSerialized(deserializedBranchList.get(j).getName(), deserializedBranchList.get(j).getSha());
+                branchSerializedList.add(branchSerialized);
+                SerializedEntity serializedEntity = new SerializedEntity(repository, username, branchSerializedList);
+                serializedEntityList.add(serializedEntity);
+            }
         }
-
-
-
-        return deserializedRepositoryNames;
+        return serializedEntityList;
     }
 }
