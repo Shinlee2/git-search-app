@@ -9,13 +9,16 @@ public class SerializedEntity {
     private String name;
     @JsonProperty("Repository Owner")
     private String owner;
-    @JsonProperty("Branches")
+    @JsonProperty("Branch List")
     private List<BranchSerialized> branches;
 
     public SerializedEntity(String name, String owner, List<BranchSerialized> branches) {
         this.name = name;
         this.owner = owner;
         this.branches = branches;
+    }
+
+    public SerializedEntity() {
     }
 
     public String getName() {
