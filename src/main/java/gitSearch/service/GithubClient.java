@@ -13,14 +13,19 @@ import java.util.List;
 
 @Service
 public class GithubClient {
-    RestClient restClient = RestClient.create();
+
+    private final RestClient restClient;
 
     @Value("${apiKey}")
     private String apiKey;
 
+    public GithubClient(RestClient restClient) {
+        this.restClient = restClient;
+    }
+
     public List<GithubRepository> getRepositories(String username) {
 
-        List<GithubRepository> deserializedRepositoryNames = restClient
+        List<GithubRepository> repositoryList = restClient
                 .get()
                 .uri("https://api.github.com/users/" + username + "/repos")
                 .header("Authorization", "Bearer " + apiKey)
@@ -31,12 +36,12 @@ public class GithubClient {
                 .body(new ParameterizedTypeReference<>() {
                 });
 
-        return deserializedRepositoryNames;
+        return repositoryList;
     }
 
     public List<GithubBranch> getBranches(String username, String repositoryName) {
 
-        List<GithubBranch> deserializedBranches = restClient
+        List<GithubBranch> branchList = restClient
                 .get()
                 .uri("https://api.github.com/repos/" + username + "/" + repositoryName + "/branches")
                 .header("Authorization", "Bearer " + apiKey)
@@ -44,6 +49,6 @@ public class GithubClient {
                 .body(new ParameterizedTypeReference<>() {
                 });
 
-        return deserializedBranches;
+        return branchList;
     }
 }

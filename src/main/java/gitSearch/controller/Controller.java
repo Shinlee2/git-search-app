@@ -3,7 +3,6 @@ package gitSearch.controller;
 import gitSearch.entity.*;
 import gitSearch.handler.UsernameNotFoundException;
 import gitSearch.service.GithubClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,8 +12,11 @@ import java.util.List;
 @RestController
 public class Controller {
 
-    @Autowired
-    private GithubClient githubClient;
+    private final GithubClient githubClient;
+
+    public Controller(GithubClient githubClient) {
+        this.githubClient = githubClient;
+    }
 
     @RequestMapping(value = "/{username}", method = RequestMethod.GET, headers = "Accept=application/json")
     public List<Repository> getRepositoriesByUsername(@PathVariable String username) {
@@ -29,13 +31,12 @@ public class Controller {
                 List<GithubBranch> githubBranchList = githubClient.getBranches(username, repositoryName);
 
                 List<Branch> branchList = new ArrayList<>();
-                Repository repository = new Repository();
-
                 for (GithubBranch githubBranch : githubBranchList) {
                     Branch branch = new Branch(githubBranch.getName(), githubBranch.getSha());
                     branchList.add(branch);
                 }
 
+                Repository repository = new Repository();
                 repository.setName(repositoryName);
                 repository.setOwner(username);
                 repository.setBranches(branchList);
