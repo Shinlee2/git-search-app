@@ -30,13 +30,15 @@ public class Controller {
 
                 List<Branch> branchList = new ArrayList<>();
                 Repository repository = new Repository();
+
                 for (GithubBranch githubBranch : githubBranchList) {
                     Branch branch = new Branch(githubBranch.getName(), githubBranch.getSha());
                     branchList.add(branch);
-                    repository.setName(repositoryName);
-                    repository.setOwner(username);
-                    repository.setBranches(branchList);
                 }
+
+                repository.setName(repositoryName);
+                repository.setOwner(username);
+                repository.setBranches(branchList);
                 repositoryList.add(repository);
             }
         }
