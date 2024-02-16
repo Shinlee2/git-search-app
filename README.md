@@ -11,11 +11,10 @@ For each branch it’s name and last commit sha
 
 As an api consumer, given not existing github user, I would like to receive 404 response in such a format:
 
-{
-
+    {
     “status”: ${responseCode}
     “message”: ${whyHasItHappened}
-}
+    }
 
 ---
 
@@ -29,12 +28,12 @@ returns Json based on given "username":
         "Repository Name": ${repositoryName},
         "Owner Login": ${ownerLogin},
         "Branch and Sha":
-        [
-            {
-                "Branch Name": ${branch},
-                "Last Commit SHA": ${sha}
-            }
-        ]
+            [
+                {
+                   "Branch Name": ${branch},
+                    "Last Commit SHA": ${sha}
+                }
+            ]  
         }
     ]
 

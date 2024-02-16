@@ -4,21 +4,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class SerializedEntity {
+public class Repository {
     @JsonProperty("Repository Name")
     private String name;
     @JsonProperty("Owner Login")
     private String owner;
     @JsonProperty("Branch List")
-    private List<BranchSerialized> branches;
+    private List<Branch> branches;
 
-    public SerializedEntity(String name, String owner, List<BranchSerialized> branches) {
+    public Repository(String name, String owner, List<Branch> branches) {
         this.name = name;
         this.owner = owner;
         this.branches = branches;
     }
 
-    public SerializedEntity() {
+    public Repository() {
     }
 
     public String getName() {
@@ -37,11 +37,11 @@ public class SerializedEntity {
         this.owner = owner;
     }
 
-    public List<BranchSerialized> getBranches() {
+    public List<Branch> getBranches() {
         return branches;
     }
 
-    public void setBranches(List<BranchSerialized> branches) {
+    public void setBranches(List<Branch> branches) {
         this.branches = branches;
     }
 }

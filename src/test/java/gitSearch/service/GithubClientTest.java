@@ -1,7 +1,7 @@
 package gitSearch.service;
 
-import gitSearch.entity.BranchEntityDeserialized;
-import gitSearch.entity.UserEntityDeserialized;
+import gitSearch.entity.GithubBranch;
+import gitSearch.entity.GithubRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,10 +11,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-class RestServiceTest {
+class GithubClientTest {
 
     @Autowired
-    RestService restService;
+    GithubClient githubClient;
 
     @Test
     void givenUsernameAndRepositoryName_whenDeserializingRepositoryBranches_thenFirstBranchNameIsAsExpected() {
@@ -24,7 +24,7 @@ class RestServiceTest {
         String expectedString = "master";
 
         //When
-        List<BranchEntityDeserialized> branchEntityList = restService.deserializeBranches(username, repositoryName);
+        List<GithubBranch> branchEntityList = githubClient.getBranches(username, repositoryName);
         String responseString = branchEntityList.get(0).getName();
 
         //Then
@@ -38,7 +38,7 @@ class RestServiceTest {
         String expectedString = "git-search-app";
 
         //When
-        List<UserEntityDeserialized> repositoryDeserializedList = restService.deserializeUsers(username);
+        List<GithubRepository> repositoryDeserializedList = githubClient.getRepositories(username);
         String responseString = repositoryDeserializedList.get(1).getName();
 
         //Then

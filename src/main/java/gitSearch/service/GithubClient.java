@@ -1,7 +1,7 @@
 package gitSearch.service;
 
-import gitSearch.entity.BranchEntityDeserialized;
-import gitSearch.entity.UserEntityDeserialized;
+import gitSearch.entity.GithubBranch;
+import gitSearch.entity.GithubRepository;
 import gitSearch.handler.UsernameNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -12,15 +12,15 @@ import org.springframework.web.client.RestClient;
 import java.util.List;
 
 @Service
-public class RestService {
+public class GithubClient {
     RestClient restClient = RestClient.create();
 
     @Value("${apiKey}")
     private String apiKey;
 
-    public List<UserEntityDeserialized> deserializeUsers(String username) {
+    public List<GithubRepository> getRepositories(String username) {
 
-        List<UserEntityDeserialized> deserializedRepositoryNames = restClient
+        List<GithubRepository> deserializedRepositoryNames = restClient
                 .get()
                 .uri("https://api.github.com/users/" + username + "/repos")
                 .header("Authorization", "Bearer " + apiKey)
@@ -34,9 +34,9 @@ public class RestService {
         return deserializedRepositoryNames;
     }
 
-    public List<BranchEntityDeserialized> deserializeBranches(String username, String repositoryName) {
+    public List<GithubBranch> getBranches(String username, String repositoryName) {
 
-        List<BranchEntityDeserialized> deserializedBranches = restClient
+        List<GithubBranch> deserializedBranches = restClient
                 .get()
                 .uri("https://api.github.com/repos/" + username + "/" + repositoryName + "/branches")
                 .header("Authorization", "Bearer " + apiKey)

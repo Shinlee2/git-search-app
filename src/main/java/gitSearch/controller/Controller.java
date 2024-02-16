@@ -2,7 +2,7 @@ package gitSearch.controller;
 
 import gitSearch.entity.*;
 import gitSearch.handler.UsernameNotFoundException;
-import gitSearch.service.RestService;
+import gitSearch.service.GithubClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,34 +12,35 @@ import java.util.List;
 
 @RestController
 public class Controller {
+
     @Autowired
-    private RestService restService;
+    private GithubClient githubClient;
 
-    @RequestMapping(value = "/{username}", method = RequestMethod.GET, headers = {"Accept=application/json"})
-    public List<SerializedEntity> getRepositoriesByUsername(@PathVariable String username) {
+    @RequestMapping(value = "/{username}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public List<Repository> getRepositoriesByUsername(@PathVariable String username) {
 
-        List<UserEntityDeserialized> repositoryList = restService.deserializeUsers(username);
+        List<GithubRepository> githubRepositoryList = githubClient.getRepositories(username);
 
-        List<SerializedEntity> serializedEntityList = new ArrayList<>();
+        List<Repository> repositoryList = new ArrayList<>();
 
-        for (int i = 0; i < repositoryList.size(); i++) {
-            if (!repositoryList.get(i).isFork()) {
-                String repository = repositoryList.get(i).getName();
-                List<BranchEntityDeserialized> deserializedBranchList = restService.deserializeBranches(username, repository);
+        for (GithubRepository githubRepository : githubRepositoryList) {
+            if (!githubRepository.isFork()) {
+                String repositoryName = githubRepository.getName();
+                List<GithubBranch> githubBranchList = githubClient.getBranches(username, repositoryName);
 
-                List<BranchSerialized> branchSerializedList = new ArrayList<>();
-                SerializedEntity serializedEntity = new SerializedEntity();
-                for (int j = 0; j < deserializedBranchList.size(); j++) {
-                    BranchSerialized branchSerialized = new BranchSerialized(deserializedBranchList.get(j).getName(), deserializedBranchList.get(j).getSha());
-                    branchSerializedList.add(branchSerialized);
-                    serializedEntity.setName(repository);
-                    serializedEntity.setOwner(username);
-                    serializedEntity.setBranches(branchSerializedList);
+                List<Branch> branchList = new ArrayList<>();
+                Repository repository = new Repository();
+                for (GithubBranch githubBranch : githubBranchList) {
+                    Branch branch = new Branch(githubBranch.getName(), githubBranch.getSha());
+                    branchList.add(branch);
+                    repository.setName(repositoryName);
+                    repository.setOwner(username);
+                    repository.setBranches(branchList);
                 }
-                serializedEntityList.add(serializedEntity);
+                repositoryList.add(repository);
             }
         }
-        return serializedEntityList;
+        return repositoryList;
     }
 
     @ResponseBody

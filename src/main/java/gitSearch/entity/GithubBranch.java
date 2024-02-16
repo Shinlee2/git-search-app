@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Map;
 
-public class BranchEntityDeserialized {
+public class GithubBranch {
+
     @JsonProperty("Branch name")
     private String name;
     @JsonProperty("Last Commit Sha")
@@ -15,7 +16,7 @@ public class BranchEntityDeserialized {
         sha = commit.get("sha");
     }
 
-    public BranchEntityDeserialized(String name, String sha) {
+    public GithubBranch(String name, String sha) {
         this.name = name;
         this.sha = sha;
     }

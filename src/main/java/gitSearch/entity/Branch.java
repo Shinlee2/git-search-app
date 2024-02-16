@@ -2,13 +2,13 @@ package gitSearch.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class BranchSerialized {
+public class Branch {
     @JsonProperty("Branch Name")
     private String name;
     @JsonProperty("Last Commit Sha")
     private String sha;
 
-    public BranchSerialized(String name, String sha) {
+    public Branch(String name, String sha) {
         this.name = name;
         this.sha = sha;
     }

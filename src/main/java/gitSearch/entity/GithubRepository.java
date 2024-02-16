@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Map;
 
-public class UserEntityDeserialized {
+public class GithubRepository {
+
     @JsonProperty("Repository Name")
     private String name;
     @JsonProperty("Owner Login")
@@ -16,7 +17,7 @@ public class UserEntityDeserialized {
         login = owner.get("login");
     }
 
-    public UserEntityDeserialized(String name, String login, Boolean fork) {
+    public GithubRepository(String name, String login, Boolean fork) {
         this.name = name;
         this.login = login;
         this.fork = fork;
