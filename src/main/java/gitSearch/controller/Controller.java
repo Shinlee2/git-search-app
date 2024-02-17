@@ -2,7 +2,7 @@ package gitSearch.controller;
 
 import gitSearch.entity.*;
 import gitSearch.handler.UsernameNotFoundException;
-import gitSearch.service.GithubClient;
+import gitSearch.service.GithubApiClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,23 +12,23 @@ import java.util.List;
 @RestController
 public class Controller {
 
-    private final GithubClient githubClient;
+    private final GithubApiClient githubApiClient;
 
-    public Controller(GithubClient githubClient) {
-        this.githubClient = githubClient;
+    public Controller(GithubApiClient githubApiClient) {
+        this.githubApiClient = githubApiClient;
     }
 
     @RequestMapping(value = "/{username}", method = RequestMethod.GET, headers = "Accept=application/json")
     public List<Repository> getRepositoriesByUsername(@PathVariable String username) {
 
-        List<GithubRepository> githubRepositoryList = githubClient.getRepositories(username);
+        List<GithubRepository> githubRepositoryList = githubApiClient.getRepositories(username);
 
         List<Repository> repositoryList = new ArrayList<>();
 
         for (GithubRepository githubRepository : githubRepositoryList) {
             if (!githubRepository.isFork()) {
                 String repositoryName = githubRepository.getName();
-                List<GithubBranch> githubBranchList = githubClient.getBranches(username, repositoryName);
+                List<GithubBranch> githubBranchList = githubApiClient.getBranches(username, repositoryName);
 
                 List<Branch> branchList = new ArrayList<>();
                 for (GithubBranch githubBranch : githubBranchList) {
